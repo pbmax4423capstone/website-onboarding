@@ -647,4 +647,173 @@
 </div>
 
 <!-- Success state -->
-<div class="card success-wrap"
+<div class="card success-wrap" id="successCard">
+  <div class="success-icon">✓</div>
+  <div class="success-title">Submitted — thanks!</div>
+  <div class="success-desc">We'll review your answers and be in touch within one business day to discuss next steps.</div>
+  <div class="success-note" id="emailConfirmNote"></div>
+</div>
+
+<script>
+const FORMSPREE_URL = "https://formspree.io/f/xvzvepad";
+const TOTAL = 7;
+let current = 0;
+
+const sections = document.querySelectorAll('.section');
+const progressBar = document.getElementById('progressBar');
+const backBtn = document.getElementById('backBtn');
+const nextBtn = document.getElementById('nextBtn');
+const stepLabel = document.getElementById('stepLabel');
+
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'progress-step';
+  d.id = 'ps' + i;
+  progressBar.appendChild(d);
+}
+
+document.querySelectorAll('.check-item').forEach(item => {
+  item.addEventListener('click', () => item.classList.toggle('checked'));
+});
+
+document.querySelectorAll('.radio-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const name = item.querySelector('input').name;
+    document.querySelectorAll('.radio-item input[name="' + name + '"]').forEach(r => {
+      r.closest('.radio-item').classList.remove('selected');
+    });
+    item.classList.add('selected');
+  });
+});
+
+function updateNav() {
+  for (let i = 0; i < TOTAL; i++) {
+    const el = document.getElementById('ps' + i);
+    el.className = 'progress-step' + (i < current ? ' done' : i === current ? ' active' : '');
+  }
+  stepLabel.textContent = 'Step ' + (current + 1) + ' of ' + TOTAL;
+  backBtn.className = 'btn' + (current === 0 ? ' btn-hidden' : '');
+  nextBtn.textContent = current === TOTAL - 2 ? 'Review →' : current === TOTAL - 1 ? 'Submit & send email ↗' : 'Continue →';
+}
+
+function getChecked(id) {
+  return [...document.querySelectorAll('#' + id + ' .check-item.checked')]
+    .map(i => i.textContent.trim()).join(', ') || '—';
+}
+function getRadio(id) {
+  const s = document.querySelector('#' + id + ' .radio-item.selected');
+  return s ? s.textContent.trim() : '—';
+}
+function fv(id) {
+  const el = document.getElementById(id);
+  return el && el.value.trim() ? el.value.trim() : '—';
+}
+
+function collectData() {
+  return {
+    bizName: fv('bizName'), industry: fv('industry'),
+    contactName: fv('contactName'), contactEmail: fv('contactEmail'),
+    phone: fv('phone'), location: fv('location'),
+    existingUrl: fv('existingUrl'), bizDesc: fv('bizDesc'),
+    primaryGoal: getRadio('primaryGoal'), audience: fv('audience'),
+    cta: fv('cta'), inspiration: fv('inspiration'),
+    pages: getChecked('pages'), otherPages: fv('otherPages'),
+    features: getChecked('features'), brandGuide: getRadio('brandGuide'),
+    brandTone: fv('brandTone'), contentReady: getChecked('contentReady'),
+    dislikes: fv('dislikes'), timeline: getRadio('timeline'),
+    budget: getRadio('budget'), maintenance: getRadio('maintenance'),
+    domainStatus: fv('domainStatus'), referral: fv('referral'),
+    teamPref: fv('teamPref'), notes: fv('notes'),
+    contactPref: getChecked('contactPref')
+  };
+}
+
+const groups = [
+  { title: 'Business basics', keys: ['bizName','industry','contactName','contactEmail','phone','location','existingUrl','bizDesc'] },
+  { title: 'Goals & purpose', keys: ['primaryGoal','audience','cta','inspiration'] },
+  { title: 'Pages & features', keys: ['pages','otherPages','features'] },
+  { title: 'Branding & content', keys: ['brandGuide','brandTone','contentReady','dislikes'] },
+  { title: 'Timeline & budget', keys: ['timeline','budget','maintenance','domainStatus'] },
+  { title: 'Additional info', keys: ['referral','teamPref','notes','contactPref'] }
+];
+
+const labels = {
+  bizName:'Business name', industry:'Industry', contactName:'Contact name', contactEmail:'Contact email',
+  phone:'Phone', location:'Location', existingUrl:'Existing website', bizDesc:'Business description',
+  primaryGoal:'Primary goal', audience:'Target audience', cta:'Desired visitor action', inspiration:'Inspiration sites',
+  pages:'Pages needed', otherPages:'Other pages', features:'Features / integrations',
+  brandGuide:'Brand guide status', brandTone:'Brand tone', contentReady:'Content ready', dislikes:'Wants to avoid',
+  timeline:'Launch timeline', budget:'Budget range', maintenance:'Ongoing maintenance', domainStatus:'Domain & hosting',
+  referral:'How they heard', teamPref:'Team preference', notes:'Notes / questions', contactPref:'Preferred contact'
+};
+
+function buildSummary() {
+  const data = collectData();
+  const container = document.getElementById('summaryContent');
+  container.innerHTML = '';
+  groups.forEach(g => {
+    const card = document.createElement('div');
+    card.className = 'summary-card';
+    card.innerHTML = '<h4>' + g.title + '</h4>' +
+      g.keys.map(k => '<div class="summary-row"><span class="s-label">' + labels[k] + '</span><span class="s-value">' + data[k] + '</span></div>').join('');
+    container.appendChild(card);
+  });
+}
+
+function showStatus(type, msg) {
+  const el = document.getElementById('statusMsg');
+  el.className = 'status-bar status-' + type;
+  el.innerHTML = type === 'sending'
+    ? '<div class="spinner"></div><span>' + msg + '</span>'
+    : '<span>' + msg + '</span>';
+  el.style.display = 'flex';
+}
+
+function hideStatus() { document.getElementById('statusMsg').style.display = 'none'; }
+
+async function sendEmail(data) {
+  const formData = new FormData();
+  formData.append('_subject', 'New website inquiry — ' + data.bizName + ' (' + data.contactName + ')');
+  Object.entries(data).forEach(([k, v]) => formData.append(k, v));
+
+  const res = await fetch(FORMSPREE_URL, {
+    method: 'POST',
+    body: formData,
+    headers: { 'Accept': 'application/json' }
+  });
+  if (!res.ok) throw new Error('Formspree ' + res.status);
+  return res.json();
+}
+
+async function navigate(dir) {
+  if (dir === 1 && current === TOTAL - 1) {
+    nextBtn.disabled = true;
+    showStatus('sending', 'Submitting and sending email notification...');
+    const data = collectData();
+    try {
+      await sendEmail(data);
+      hideStatus();
+      document.getElementById('mainCard').style.display = 'none';
+      const sc = document.getElementById('successCard');
+      sc.style.display = 'block';
+      document.getElementById('emailConfirmNote').textContent = 'A copy has been emailed to our team.';
+    } catch (e) {
+      hideStatus();
+      showStatus('error', 'Submission recorded, but the email failed to send. Please try again or contact us directly.');
+      nextBtn.disabled = false;
+    }
+    return;
+  }
+  sections[current].classList.remove('active');
+  current += dir;
+  if (current === TOTAL - 1) buildSummary();
+  sections[current].classList.add('active');
+  updateNav();
+  hideStatus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+updateNav();
+</script>
+</body>
+</html>
