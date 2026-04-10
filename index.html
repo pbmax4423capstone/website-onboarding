@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Project Onboarding</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f7f7f5;
+    --bg-tertiary: #f0efe9;
+    --text: #1a1a18;
+    --text-secondary: #5a5a55;
+    --text-tertiary: #9a9a94;
+    --border: rgba(0,0,0,0.12);
+    --border-hover: rgba(0,0,0,0.25);
+    --border-focus: rgba(0,0,0,0.45);
+    --accent: #1a1a18;
+    --accent-text: #ffffff;
+    --success-bg: #eaf3de;
+    --success-text: #3b6d11;
+    --success-border: #97c459;
+    --error-bg: #fcebeb;
+    --error-text: #a32d2d;
+    --error-border: #f09595;
+    --info-bg: #e6f1fb;
+    --info-text: #185fa5;
+    --info-border: #85b7eb;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --font: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1a;
+      --bg-secondary: #252523;
+      --bg-tertiary: #2e2e2b;
+      --text: #f0efe9;
+      --text-secondary: #a8a89f;
+      --text-tertiary: #6a6a62;
+      --border: rgba(255,255,255,0.12);
+      --border-hover: rgba(255,255,255,0.25);
+      --border-focus: rgba(255,255,255,0.45);
+      --accent: #f0efe9;
+      --accent-text: #1c1c1a;
+      --success-bg: #173404;
+      --success-text: #c0dd97;
+      --success-border: #3b6d11;
+      --error-bg: #501313;
+      --error-text: #f7c1c1;
+      --error-border: #a32d2d;
+      --info-bg: #042c53;
+      --info-text: #b5d4f4;
+      --info-border: #185fa5;
+    }
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg-tertiary);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 680px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .brand-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text);
+  }
+
+  .brand-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+  }
+
+  .progress-bar {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 2rem;
+  }
+
+  .progress-step {
+    flex: 1;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+
+  .progress-step.done { background: var(--text-tertiary); }
+  .progress-step.active { background: var(--text); }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-num {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .section-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.75rem;
+  }
+
+  .field-group { margin-bottom: 1.2rem; }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 520px) {
+    .field-row { grid-template-columns: 1fr; }
+    .card { padding: 1.5rem; }
+  }
+
+  label.field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+
+  .required { color: var(--error-text); }
+
+  input[type=text],
+  input[type=email],
+  input[type=url],
+  input[type=tel],
+  select,
+  textarea {
+    width: 100%;
+    padding: 9px 12px;
+    font-size: 14px;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    border: 0.5px solid var(--border-hover);
+    border-radius: var(--radius);
+    outline: none;
+    transition: border-color 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--border-focus);
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+
+  textarea { resize: vertical; line-height: 1.6; min-height: 80px; }
+
+  .checkbox-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  @media (max-width: 420px) { .checkbox-grid { grid-template-columns: 1fr; } }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 12px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    font-size: 13px;
+    color: var(--text);
+    user-select: none;
+  }
+
+  .check-item:hover { border-color: var(--border-hover); background: var(--bg-secondary); }
+  .check-item.checked { border-color: var(--border-focus); background: var(--bg-secondary); }
+
+  .check-item input[type=checkbox] {
+    width: 14px; height: 14px;
+    flex-shrink: 0;
+    accent-color: var(--accent);
+    border: none; padding: 0;
+  }
+
+  .radio-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .radio-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text);
+    transition: border-color 0.15s, background 0.15s;
+    user-select: none;
+  }
+
+  .radio-item:hover { border-color: var(--border-hover); background: var(--bg-secondary); }
+  .radio-item.selected { border-color: var(--border-focus); background: var(--bg-secondary); }
+  .radio-item input { accent-color: var(--accent); flex-shrink: 0; width: 14px; height: 14px; border: none; padding: 0; }
+
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 0.5px solid var(--border);
+  }
+
+  .btn {
+    padding: 10px 22px;
+    font-size: 14px;
+    font-family: var(--font);
+    font-weight: 500;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 0.5px solid var(--border-hover);
+    background: transparent;
+    color: var(--text-secondary);
+  }
+
+  .btn:hover { background: var(--bg-secondary); color: var(--text); }
+  .btn-primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  .btn-primary:hover { opacity: 0.85; background: var(--accent); color: var(--accent-text); }
+  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-hidden { visibility: hidden; }
+
+  .step-label { font-size: 13px; color: var(--text-tertiary); }
+
+  .summary-grid { display: grid; gap: 10px; }
+
+  .summary-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+
+  .summary-card h4 {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 13px;
+    padding: 3px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .s-label { color: var(--text-secondary); white-space: nowrap; flex-shrink: 0; }
+  .summary-row .s-value { color: var(--text); font-weight: 500; text-align: right; word-break: break-word; }
+
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    margin-bottom: 1.25rem;
+  }
+
+  .status-sending { background: var(--info-bg); color: var(--info-text); border: 0.5px solid var(--info-border); }
+  .status-success { background: var(--success-bg); color: var(--success-text); border: 0.5px solid var(--success-border); }
+  .status-error { background: var(--error-bg); color: var(--error-text); border: 0.5px solid var(--error-border); }
+
+  .spinner {
+    width: 14px; height: 14px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .success-wrap {
+    display: none;
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .success-icon {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--success-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    font-size: 24px;
+    color: var(--success-text);
+  }
+
+  .success-title {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .success-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    max-width: 360px;
+    margin: 0 auto 10px;
+    line-height: 1.6;
+  }
+
+  .success-note { font-size: 13px; color: var(--text-tertiary); }
+</style>
+</head>
+<body>
+<div class="card" id="mainCard">
+
+  <div class="brand">
+    <div class="brand-dot"></div>
+    <div class="brand-name">Website Project Onboarding</div>
+  </div>
+
+  <div class="progress-bar" id="progressBar"></div>
+  <div id="statusMsg" style="display:none"></div>
+
+  <!-- Section 1: Business Basics -->
+  <div class="section active" data-section="0">
+    <div class="section-num">Section 1 of 6</div>
+    <div class="section-title">Business basics</div>
+    <div class="section-desc">Tell us about your business so we can understand who we're building for.</div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">Business name <span class="required">*</span></label>
+        <input type="text" id="bizName" placeholder="Acme Co.">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Industry <span class="required">*</span></label>
+        <select id="industry">
+          <option value="">Select one...</option>
+          <option>Professional services</option>
+          <option>Retail / e-commerce</option>
+          <option>Restaurant / food &amp; beverage</option>
+          <option>Health &amp; wellness</option>
+          <option>Real estate</option>
+          <option>Construction / trades</option>
+          <option>Technology</option>
+          <option>Nonprofit</option>
+          <option>Education</option>
+          <option>Finance / insurance</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">Primary contact name <span class="required">*</span></label>
+        <input type="text" id="contactName" placeholder="Jane Smith">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Contact email <span class="required">*</span></label>
+        <input type="email" id="contactEmail" placeholder="jane@acme.com">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">Phone number</label>
+        <input type="tel" id="phone" placeholder="(303) 555-0100">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Business location</label>
+        <input type="text" id="location" placeholder="Denver, CO">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Existing website URL (if any)</label>
+      <input type="url" id="existingUrl" placeholder="https://">
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">How would you describe your business? <span class="required">*</span></label>
+      <textarea id="bizDesc" rows="3" placeholder="What do you do, who do you serve, what makes you different..."></textarea>
+    </div>
+  </div>
+
+  <!-- Section 2: Goals -->
+  <div class="section" data-section="1">
+    <div class="section-num">Section 2 of 6</div>
+    <div class="section-title">Goals &amp; purpose</div>
+    <div class="section-desc">What should this website accomplish for you?</div>
+
+    <div class="field-group">
+      <label class="field-label">Primary goal for the website <span class="required">*</span></label>
+      <div class="radio-list" id="primaryGoal">
+        <label class="radio-item"><input type="radio" name="goal"> Generate leads / inquiries</label>
+        <label class="radio-item"><input type="radio" name="goal"> Sell products online</label>
+        <label class="radio-item"><input type="radio" name="goal"> Build credibility / online presence</label>
+        <label class="radio-item"><input type="radio" name="goal"> Share information / resources</label>
+        <label class="radio-item"><input type="radio" name="goal"> Accept bookings / appointments</label>
+        <label class="radio-item"><input type="radio" name="goal"> Other</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Who is your target audience?</label>
+      <textarea id="audience" rows="2" placeholder="Age range, demographics, job title, interests..."></textarea>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">What action do you want visitors to take?</label>
+      <textarea id="cta" rows="2" placeholder="e.g. Call us, fill out a form, buy a product, schedule a demo..."></textarea>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">List 2–3 competitor or inspiration websites</label>
+      <textarea id="inspiration" rows="3" placeholder="URL or site name — and what you like about each..."></textarea>
+    </div>
+  </div>
+
+  <!-- Section 3: Pages & Features -->
+  <div class="section" data-section="2">
+    <div class="section-num">Section 3 of 6</div>
+    <div class="section-title">Pages &amp; features</div>
+    <div class="section-desc">Tell us what pages and functionality you need.</div>
+
+    <div class="field-group">
+      <label class="field-label">Which pages do you need? (select all that apply)</label>
+      <div class="checkbox-grid" id="pages">
+        <label class="check-item"><input type="checkbox"> Home</label>
+        <label class="check-item"><input type="checkbox"> About / our story</label>
+        <label class="check-item"><input type="checkbox"> Services / offerings</label>
+        <label class="check-item"><input type="checkbox"> Products / shop</label>
+        <label class="check-item"><input type="checkbox"> Portfolio / case studies</label>
+        <label class="check-item"><input type="checkbox"> Blog / news</label>
+        <label class="check-item"><input type="checkbox"> Testimonials / reviews</label>
+        <label class="check-item"><input type="checkbox"> Team / staff</label>
+        <label class="check-item"><input type="checkbox"> FAQ</label>
+        <label class="check-item"><input type="checkbox"> Contact</label>
+        <label class="check-item"><input type="checkbox"> Booking / scheduling</label>
+        <label class="check-item"><input type="checkbox"> Events / calendar</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Other pages or custom sections needed</label>
+      <input type="text" id="otherPages" placeholder="e.g. Careers page, member login, resource library...">
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Special features or integrations needed</label>
+      <div class="checkbox-grid" id="features">
+        <label class="check-item"><input type="checkbox"> Contact form</label>
+        <label class="check-item"><input type="checkbox"> Online payments</label>
+        <label class="check-item"><input type="checkbox"> Live chat</label>
+        <label class="check-item"><input type="checkbox"> Newsletter signup</label>
+        <label class="check-item"><input type="checkbox"> Social media feeds</label>
+        <label class="check-item"><input type="checkbox"> Map / directions</label>
+        <label class="check-item"><input type="checkbox"> Video embed</label>
+        <label class="check-item"><input type="checkbox"> Photo gallery</label>
+        <label class="check-item"><input type="checkbox"> Job postings</label>
+        <label class="check-item"><input type="checkbox"> CRM integration</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Branding -->
+  <div class="section" data-section="3">
+    <div class="section-num">Section 4 of 6</div>
+    <div class="section-title">Branding &amp; content</div>
+    <div class="section-desc">Help us understand your visual identity and what content you have ready.</div>
+
+    <div class="field-group">
+      <label class="field-label">Do you have an existing brand / style guide?</label>
+      <div class="radio-list" id="brandGuide">
+        <label class="radio-item"><input type="radio" name="brand"> Yes — full brand guide (colors, fonts, logo, etc.)</label>
+        <label class="radio-item"><input type="radio" name="brand"> Partial — logo + some colors but nothing formal</label>
+        <label class="radio-item"><input type="radio" name="brand"> No — needs to be created from scratch</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Describe your brand's tone and personality</label>
+      <textarea id="brandTone" rows="2" placeholder="e.g. Professional and trustworthy, fun and playful, premium and minimal..."></textarea>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">What content will you provide?</label>
+      <div class="checkbox-grid" id="contentReady">
+        <label class="check-item"><input type="checkbox"> Written copy (text)</label>
+        <label class="check-item"><input type="checkbox"> Professional photos</label>
+        <label class="check-item"><input type="checkbox"> Logo files</label>
+        <label class="check-item"><input type="checkbox"> Videos</label>
+        <label class="check-item"><input type="checkbox"> Testimonials / reviews text</label>
+        <label class="check-item"><input type="checkbox"> None — we need help with all of it</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Anything you strongly want to avoid visually or stylistically?</label>
+      <textarea id="dislikes" rows="2" placeholder="Colors, styles, layouts, or vibes you don't want..."></textarea>
+    </div>
+  </div>
+
+  <!-- Section 5: Timeline & Budget -->
+  <div class="section" data-section="4">
+    <div class="section-num">Section 5 of 6</div>
+    <div class="section-title">Timeline &amp; budget</div>
+    <div class="section-desc">Let's make sure we're aligned on scope and expectations.</div>
+
+    <div class="field-group">
+      <label class="field-label">Ideal launch timeline <span class="required">*</span></label>
+      <div class="radio-list" id="timeline">
+        <label class="radio-item"><input type="radio" name="timeline"> ASAP — within 2–3 weeks</label>
+        <label class="radio-item"><input type="radio" name="timeline"> Within 1 month</label>
+        <label class="radio-item"><input type="radio" name="timeline"> 1–2 months</label>
+        <label class="radio-item"><input type="radio" name="timeline"> Flexible — no hard deadline</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Approximate budget range <span class="required">*</span></label>
+      <div class="radio-list" id="budget">
+        <label class="radio-item"><input type="radio" name="budget"> Under $2,000</label>
+        <label class="radio-item"><input type="radio" name="budget"> $2,000 – $5,000</label>
+        <label class="radio-item"><input type="radio" name="budget"> $5,000 – $10,000</label>
+        <label class="radio-item"><input type="radio" name="budget"> $10,000+</label>
+        <label class="radio-item"><input type="radio" name="budget"> Prefer to discuss</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Ongoing maintenance after launch?</label>
+      <div class="radio-list" id="maintenance">
+        <label class="radio-item"><input type="radio" name="maint"> Yes — monthly retainer</label>
+        <label class="radio-item"><input type="radio" name="maint"> As-needed / occasional</label>
+        <label class="radio-item"><input type="radio" name="maint"> No — we'll handle it ourselves</label>
+        <label class="radio-item"><input type="radio" name="maint"> Not sure yet</label>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Do you have a domain name and hosting already?</label>
+      <select id="domainStatus">
+        <option value="">Select one...</option>
+        <option>Yes — have both domain and hosting</option>
+        <option>Have a domain, need hosting</option>
+        <option>Have hosting, need a domain</option>
+        <option>Need both — please include in scope</option>
+        <option>Not sure</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Section 6: Additional Info -->
+  <div class="section" data-section="5">
+    <div class="section-num">Section 6 of 6</div>
+    <div class="section-title">Anything else?</div>
+    <div class="section-desc">Last details before we wrap up.</div>
+
+    <div class="field-group">
+      <label class="field-label">How did you hear about us?</label>
+      <select id="referral">
+        <option value="">Select one...</option>
+        <option>Referral from a friend or colleague</option>
+        <option>Google / web search</option>
+        <option>LinkedIn</option>
+        <option>Social media</option>
+        <option>Repeat client</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Is there a specific person or team you'd like to work with?</label>
+      <input type="text" id="teamPref" placeholder="Name or note (optional)">
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Questions, concerns, or other context?</label>
+      <textarea id="notes" rows="4" placeholder="Share anything else that would help us understand your project..."></textarea>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Best way to reach you for follow-up</label>
+      <div class="checkbox-grid" id="contactPref">
+        <label class="check-item"><input type="checkbox"> Email</label>
+        <label class="check-item"><input type="checkbox"> Phone call</label>
+        <label class="check-item"><input type="checkbox"> Text / SMS</label>
+        <label class="check-item"><input type="checkbox"> Video call</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 7: Review -->
+  <div class="section" data-section="6">
+    <div class="section-title">Review &amp; submit</div>
+    <div class="section-desc" style="margin-bottom:1.25rem;">Everything look right? Submit to send your answers — a copy will be emailed to us automatically.</div>
+    <div class="summary-grid" id="summaryContent"></div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-hidden" id="backBtn" onclick="navigate(-1)">← Back</button>
+    <span class="step-label" id="stepLabel">Step 1 of 7</span>
+    <button class="btn btn-primary" id="nextBtn" onclick="navigate(1)">Continue →</button>
+  </div>
+
+</div>
+
+<!-- Success state -->
+<div class="card success-wrap" id="successCard">
+  <div class="success-icon">✓</div>
+  <div class="success-title">Submitted — thanks!</div>
+  <div class="success-desc">We'll review your answers and be in touch within one business day to discuss next steps.</div>
+  <div class="success-note" id="emailConfirmNote"></div>
+</div>
+
+<script>
+const RECIPIENT = "pbmaxdeveloper@gmail.com";
+const TOTAL = 7;
+let current = 0;
+
+const sections = document.querySelectorAll('.section');
+const progressBar = document.getElementById('progressBar');
+const backBtn = document.getElementById('backBtn');
+const nextBtn = document.getElementById('nextBtn');
+const stepLabel = document.getElementById('stepLabel');
+
+// Build progress dots
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'progress-step';
+  d.id = 'ps' + i;
+  progressBar.appendChild(d);
+}
+
+// Checkbox toggle
+document.querySelectorAll('.check-item').forEach(item => {
+  item.addEventListener('click', () => item.classList.toggle('checked'));
+});
+
+// Radio toggle
+document.querySelectorAll('.radio-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const name = item.querySelector('input').name;
+    document.querySelectorAll('.radio-item input[name="' + name + '"]').forEach(r => {
+      r.closest('.radio-item').classList.remove('selected');
+    });
+    item.classList.add('selected');
+  });
+});
+
+function updateNav() {
+  for (let i = 0; i < TOTAL; i++) {
+    const el = document.getElementById('ps' + i);
+    el.className = 'progress-step' + (i < current ? ' done' : i === current ? ' active' : '');
+  }
+  stepLabel.textContent = 'Step ' + (current + 1) + ' of ' + TOTAL;
+  backBtn.className = 'btn' + (current === 0 ? ' btn-hidden' : '');
+  nextBtn.textContent = current === TOTAL - 2 ? 'Review →' : current === TOTAL - 1 ? 'Submit & send email ↗' : 'Continue →';
+}
+
+function getChecked(id) {
+  return [...document.querySelectorAll('#' + id + ' .check-item.checked')]
+    .map(i => i.textContent.trim()).join(', ') || '—';
+}
+function getRadio(id) {
+  const s = document.querySelector('#' + id + ' .radio-item.selected');
+  return s ? s.textContent.trim() : '—';
+}
+function fv(id) {
+  const el = document.getElementById(id);
+  return el && el.value.trim() ? el.value.trim() : '—';
+}
+
+function collectData() {
+  return {
+    bizName: fv('bizName'), industry: fv('industry'),
+    contactName: fv('contactName'), contactEmail: fv('contactEmail'),
+    phone: fv('phone'), location: fv('location'),
+    existingUrl: fv('existingUrl'), bizDesc: fv('bizDesc'),
+    primaryGoal: getRadio('primaryGoal'), audience: fv('audience'),
+    cta: fv('cta'), inspiration: fv('inspiration'),
+    pages: getChecked('pages'), otherPages: fv('otherPages'),
+    features: getChecked('features'), brandGuide: getRadio('brandGuide'),
+    brandTone: fv('brandTone'), contentReady: getChecked('contentReady'),
+    dislikes: fv('dislikes'), timeline: getRadio('timeline'),
+    budget: getRadio('budget'), maintenance: getRadio('maintenance'),
+    domainStatus: fv('domainStatus'), referral: fv('referral'),
+    teamPref: fv('teamPref'), notes: fv('notes'),
+    contactPref: getChecked('contactPref')
+  };
+}
+
+const groups = [
+  { title: 'Business basics', keys: ['bizName','industry','contactName','contactEmail','phone','location','existingUrl','bizDesc'] },
+  { title: 'Goals & purpose', keys: ['primaryGoal','audience','cta','inspiration'] },
+  { title: 'Pages & features', keys: ['pages','otherPages','features'] },
+  { title: 'Branding & content', keys: ['brandGuide','brandTone','contentReady','dislikes'] },
+  { title: 'Timeline & budget', keys: ['timeline','budget','maintenance','domainStatus'] },
+  { title: 'Additional info', keys: ['referral','teamPref','notes','contactPref'] }
+];
+
+const labels = {
+  bizName:'Business name', industry:'Industry', contactName:'Contact name', contactEmail:'Contact email',
+  phone:'Phone', location:'Location', existingUrl:'Existing website', bizDesc:'Business description',
+  primaryGoal:'Primary goal', audience:'Target audience', cta:'Desired visitor action', inspiration:'Inspiration sites',
+  pages:'Pages needed', otherPages:'Other pages', features:'Features / integrations',
+  brandGuide:'Brand guide status', brandTone:'Brand tone', contentReady:'Content ready', dislikes:'Wants to avoid',
+  timeline:'Launch timeline', budget:'Budget range', maintenance:'Ongoing maintenance', domainStatus:'Domain & hosting',
+  referral:'How they heard', teamPref:'Team preference', notes:'Notes / questions', contactPref:'Preferred contact'
+};
+
+function buildSummary() {
+  const data = collectData();
+  const container = document.getElementById('summaryContent');
+  container.innerHTML = '';
+  groups.forEach(g => {
+    const card = document.createElement('div');
+    card.className = 'summary-card';
+    card.innerHTML = '<h4>' + g.title + '</h4>' +
+      g.keys.map(k => '<div class="summary-row"><span class="s-label">' + labels[k] + '</span><span class="s-value">' + data[k] + '</span></div>').join('');
+    container.appendChild(card);
+  });
+}
+
+function buildEmailText(data) {
+  const date = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  return 'New website onboarding submission — ' + date + '\n\n' +
+    groups.map(g => g.title.toUpperCase() + '\n' + g.keys.map(k => labels[k] + ': ' + data[k]).join('\n')).join('\n\n');
+}
+
+function showStatus(type, msg) {
+  const el = document.getElementById('statusMsg');
+  el.className = 'status-bar status-' + type;
+  el.innerHTML = type === 'sending'
+    ? '<div class="spinner"></div><span>' + msg + '</span>'
+    : '<span>' + msg + '</span>';
+  el.style.display = 'flex';
+}
+
+function hideStatus() { document.getElementById('statusMsg').style.display = 'none'; }
+
+async function sendEmail(data) {
+  const subject = 'New website inquiry — ' + data.bizName + ' (' + data.contactName + ')';
+  const body = buildEmailText(data);
+  const prompt = `Please send an email via Gmail with exactly these details:\nTo: ${RECIPIENT}\nSubject: ${subject}\nBody:\n${body}\n\nSend it now.`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }],
+      mcp_servers: [{ type: 'url', url: 'https://gmail.mcp.claude.com/mcp', name: 'gmail' }]
+    })
+  });
+  if (!res.ok) throw new Error('API ' + res.status);
+  return res.json();
+}
+
+async function navigate(dir) {
+  if (dir === 1 && current === TOTAL - 1) {
+    nextBtn.disabled = true;
+    showStatus('sending', 'Submitting and sending email notification...');
+    const data = collectData();
+    try {
+      await sendEmail(data);
+      hideStatus();
+      document.getElementById('mainCard').style.display = 'none';
+      const sc = document.getElementById('successCard');
+      sc.style.display = 'block';
+      document.getElementById('emailConfirmNote').textContent = 'Email notification sent to ' + RECIPIENT;
+    } catch (e) {
+      hideStatus();
+      showStatus('error', 'Submission recorded, but the email failed to send. Please try again or contact us directly.');
+      nextBtn.disabled = false;
+    }
+    return;
+  }
+  sections[current].classList.remove('active');
+  current += dir;
+  if (current === TOTAL - 1) buildSummary();
+  sections[current].classList.add('active');
+  updateNav();
+  hideStatus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+updateNav();
+</script>
+</body>
+</html>
